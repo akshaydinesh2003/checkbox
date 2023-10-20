@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Your CSS styles here */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        input[type="text"] {
+            width: 150px; /* Set a fixed width for the input fields */
+            margin-right: 10px;
+        }
+
+        span {
+            font-size: 18px;
+        }
+
+        #addButton,
+        #deleteButton {
+            font-size: 18px; /* Increase the font size */
+            padding: 10px 20px; /* Increase the padding */
+        }
+
+        @media (max-width: 600px) {
+            span {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Checkbox Reminder App</h1>
+    <div class="input-container">
+        <button type="button" onclick="addNewReminder()" id="addButton">+ Add</button>
+        <button type="button" onclick="deleteReminder()" id="deleteButton">Delete</button>
+    </div>
+    <ul id="reminderList"></ul>
+
+    <script>
+        let nextReminderIndex = 1;
+        let selectedReminders = [];
+
+        function toggleStrikeThrough(checkbox, elementId) {
+            const textElement = document.getElementById(elementId);
+
+            if (checkbox.checked) {
+                textElement.classList.add('strikethrough');
+                selectedReminders.push(elementId);
+            } else {
+                textElement.classList.remove('strikethrough');
+                selectedReminders = selectedReminders.filter(id => id !== elementId);
+            }
+        }
+
+        function createReminderInput(reminderList, index) {
+            const listItem = document.createElement('li');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'checkbox' + index;
+            checkbox.onclick = function() {
+                toggleStrikeThrough(checkbox, 'text' + index);
+            };
+
+            const text = document.createElement('span');
+            text.id = 'text' + index;
+            const reminderText = document.createElement('input');
+            reminderText.type = 'text';
+            reminderText.placeholder = `Reminder ${index}`;
+            reminderText.addEventListener('input', function() {
+                text.textContent = reminderText.value;
+            });
+
+            listItem.appendChild(checkbox);
+            listItem.appendChild(reminderText);
+            listItem.appendChild(text);
+            reminderList.appendChild(listItem);
+        }
+
+        function addNewReminder() {
+            const reminderList = document.getElementById('reminderList');
+            createReminderInput(reminderList, nextReminderIndex);
+            nextReminderIndex++;
+        }
+
+        function deleteReminder() {
+            const reminderList = document.getElementById('reminderList');
+            for (const elementId of selectedReminders) {
+                const element = document.getElementById(elementId);
+                const listItem = element.parentElement;
+                reminderList.removeChild(listItem);
+            }
+            selectedReminders = [];
+        }
+    </script>
+</body>
+</html>
